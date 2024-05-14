@@ -1,146 +1,50 @@
 <template>
-  <section class="todoapp">
-    <header class="header">
-      <h1>Vacation Planning Routes</h1>
-      <input
-        class="new-todo"
-        autofocus
-        placeholder="Travel Plan"
-        @keyup.enter="addTodo"
-        v-model="newTodo"
-      >
-      <input
-        class="departure-time"
-        type="datetime-local"
-        v-model="newDepartureTime"
-        placeholder="Select departure time"
-      >
-    </header>
-    <section class="main" v-show="todos.length">
-      <input
-        id="toggle-all"
-        class="toggle-all"
-        type="checkbox"
-        :checked="remaining === 0"
-        @change="toggleAll"
-      >
-      <label for="toggle-all">Mark all as complete</label>
-      <ul class="todo-list">
-        <li
-          v-for="todo in filteredTodos"
-          class="todo"
-          :key="todo.id"
-          :class="{ completed: todo.completed }"
-        >
-          <div class="view">
-            <input class="toggle" type="checkbox" v-model="todo.completed">
-            <label>
-              {{ todo.title }}
-              <span class="date">{{ formatDate(todo.departureTime) }}</span>
-            </label>
-            <button class="destroy" @click="removeTodo(todo)"></button>
-          </div>
-        </li>
+  <div>
+    <nav class="navbar">
+      <ul>
+        <li><router-link to="/todos" :class="{ selected: $route.path === '/todos' }">Todos</router-link></li>
+        <li><router-link to="/post" :class="{ selected: $route.path === '/post' }">Post</router-link></li>
       </ul>
-    </section>
-    <footer class="footer" v-show="todos.length">
-      <span class="todo-count">
-        <strong>{{ remaining }}</strong>
-        <span>{{ remaining === 1 ? ' item' : ' items' }} left</span>
-      </span>
-      <ul class="filters">
-        <li>
-          <a href="#/all" :class="{ selected: visibility === 'all' }">All</a>
-        </li>
-        <li>
-          <a href="#/active" :class="{ selected: visibility === 'active' }">Active</a>
-        </li>
-        <li>
-          <a href="#/completed" :class="{ selected: visibility === 'completed' }">Completed</a>
-        </li>
-      </ul>
-    </footer>
-  </section>
+    </nav>
+    <router-view></router-view>
+  </div>
 </template>
 
-<script setup>
-import { ref, computed, watchEffect } from 'vue'
-
-const STORAGE_KEY = 'vue-todomvc'
-const todos = ref(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'))
-const newTodo = ref('')
-const newDepartureTime = ref('')
-const visibility = ref('all')
-const filteredTodos = computed(() => filters[visibility.value](todos.value))
-const remaining = computed(() => filters.active(todos.value).length)
-
-const filters = {
-  all: (todos) => todos,
-  active: (todos) => todos.filter((todo) => !todo.completed),
-  completed: (todos) => todos.filter((todo) => todo.completed)
-}
-
-window.addEventListener('hashchange', onHashChange)
-onHashChange()
-
-watchEffect(() => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(todos.value))
-})
-
-function toggleAll(e) {
-  todos.value.forEach((todo) => (todo.completed = e.target.checked))
-}
-
-function addTodo(e) {
-  const title = newTodo.value.trim()
-  const departureTime = newDepartureTime.value
-  if (title && departureTime) {
-    todos.value.push({
-      id: Date.now(),
-      title: title,
-      departureTime: departureTime,
-      completed: false
-    })
-    newTodo.value = ''
-    newDepartureTime.value = ''
-  }
-}
-
-function removeTodo(todo) {
-  todos.value.splice(todos.value.indexOf(todo), 1)
-}
-
-function formatDate(timestamp) {
-  const date = new Date(timestamp)
-  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
-  return date.toLocaleDateString('en-US', options)
-}
-
-function onHashChange() {
-  const route = window.location.hash.replace(/#\/?/, '')
-  if (filters[route]) {
-    visibility.value = route
-  } else {
-    visibility.value = 'all'
-    window.location.hash = ''
-  }
-}
-</script>
-
-<style>
-.date {
-  font-size: 12px;
-  color: white;
-  margin-left: 5px;
-}
-
-.departure-time {
+<style scoped>
+.navbar {
   background-color: transparent;
+  padding: 3rem;
+  text-align: center;
+}
+
+.navbar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.navbar ul li {
+  display: inline; 
+  margin-right: 2rem;
+}
+
+.navbar ul li:last-child {
+  margin-right: 0;
+}
+
+.navbar ul li a {
   color: white;
-  margin-top: 5px;
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.navbar ul li a.selected, .navbar ul li a:hover {
+  background-color: #555;
+  color: #fff;
 }
 </style>
-
