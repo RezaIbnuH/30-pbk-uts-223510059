@@ -67,5 +67,6 @@ export default {
   text-decoration: none;
   color: #000;
   font-weight: bold;
+  font-size: 24px;
 }
 </style>
