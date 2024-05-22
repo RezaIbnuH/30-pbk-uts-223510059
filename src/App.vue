@@ -65,7 +65,8 @@ export default {
 
 .navbar a {
   text-decoration: none;
-  color: #000;
+  color: white;
+  font-style: italic;
   font-weight: bold;
   font-size: 24px;
 }
