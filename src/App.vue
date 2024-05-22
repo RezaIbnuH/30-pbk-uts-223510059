@@ -1,50 +1,71 @@
 <template>
-  <div>
-    <nav class="navbar">
-      <ul>
-        <li><router-link to="/todos" :class="{ selected: $route.path === '/todos' }">Todos</router-link></li>
-        <li><router-link to="/post" :class="{ selected: $route.path === '/post' }">Post</router-link></li>
-      </ul>
-    </nav>
-    <router-view></router-view>
+  <div class="app">
+    <header class="header">
+      <nav class="navbar">
+        <ul>
+          <li><a href="#" @click="showTodos">Todos</a></li>
+          <li><a href="#" @click="showPosts">Posts</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <div v-if="showingTodos">
+      <Todos />
+    </div>
+
+    <div v-if="showingPosts">
+      <Posts />
+    </div>
   </div>
 </template>
 
+<script>
+import Todos from './components/Todos.vue';
+import Posts from './components/Posts.vue';
+
+export default {
+  components: {
+    Todos,
+    Posts
+  },
+  data() {
+    return {
+      showingTodos: true,
+      showingPosts: false,
+    }
+  },
+  methods: {
+    showTodos() {
+      this.showingTodos = true;
+      this.showingPosts = false;
+    },
+    showPosts() {
+      this.showingTodos = false;
+      this.showingPosts = true;
+    },
+  },
+}
+</script>
+
 <style scoped>
-.navbar {
-  background-color: transparent;
-  padding: 3rem;
+.header {
   text-align: center;
+  padding: 20px;
 }
 
 .navbar ul {
-  list-style-type: none;
+  list-style: none;
   padding: 0;
-  margin: 0;
-  display: flex;
-  justify-content: center;
 }
 
-.navbar ul li {
-  display: inline; 
-  margin-right: 2rem;
+.navbar li {
+  display: inline;
+  margin: 0 10px;
 }
 
-.navbar ul li:last-child {
-  margin-right: 0;
-}
-
-.navbar ul li a {
-  color: white;
+.navbar a {
   text-decoration: none;
-  padding: 0.5rem 1rem;
-  font-size: 1.2rem;
-  border-radius: 5px;
+  color: #000;
   font-weight: bold;
-}
-
-.navbar ul li a.selected, .navbar ul li a:hover {
-  background-color: #555;
-  color: #fff;
 }
 </style>
