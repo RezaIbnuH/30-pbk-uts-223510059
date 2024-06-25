@@ -49,13 +49,13 @@
       </span>
       <ul class="filters">
         <li>
-          <a href="#/all" :class="{ selected: visibility === 'all' }">All</a>
+          <router-link to="/todos/all" :class="{ selected: visibility === 'all' }">All</router-link>
         </li>
         <li>
-          <a href="#/active" :class="{ selected: visibility === 'active' }">Active</a>
+          <router-link to="/todos/active" :class="{ selected: visibility === 'active' }">Active</router-link>
         </li>
         <li>
-          <a href="#/completed" :class="{ selected: visibility === 'completed' }">Completed</a>
+          <router-link to="/todos/completed" :class="{ selected: visibility === 'completed' }">Completed</router-link>
         </li>
       </ul>
     </footer>

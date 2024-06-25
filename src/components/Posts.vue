@@ -2,7 +2,7 @@
   <div>
     <h1>Post Viewer</h1>
     <label for="userSelect">Select User:</label>
-    <select v-model="selectedUser" @change="getPosts">
+    <select v-model="selectedUser" @change="handleChangeUser">
       <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name }}</option>
     </select>
 
@@ -20,11 +20,15 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 const users = ref([]);
 const posts = ref([]);
 const selectedUser = ref(null);
 const selectedUserDetails = ref({});
+
+const router = useRouter();
+const route = useRoute();
 
 const getUsers = async () => {
   try {
@@ -36,10 +40,10 @@ const getUsers = async () => {
   }
 };
 
-const getUserDetails = async () => {
-  if (selectedUser.value) {
+const getUserDetails = async (userId) => {
+  if (userId) {
     try {
-      const response = await fetch(`https://jsonplaceholder.typicode.com/users/${selectedUser.value}`);
+      const response = await fetch(`https://jsonplaceholder.typicode.com/users/${userId}`);
       const data = await response.json();
       selectedUserDetails.value = data;
     } catch (error) {
@@ -48,25 +52,34 @@ const getUserDetails = async () => {
   }
 };
 
-const getPosts = async () => {
-  if (selectedUser.value) {
+const getPosts = async (userId) => {
+  if (userId) {
     try {
-      const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${selectedUser.value}`);
+      const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
       const data = await response.json();
       posts.value = data;
-      getUserDetails();
+      getUserDetails(userId);
     } catch (error) {
       console.error('Error fetching posts:', error);
     }
   }
 };
 
+const handleChangeUser = () => {
+  if (selectedUser.value) {
+    router.push(`/posts/${selectedUser.value}`);
+  }
+};
+
 onMounted(() => {
   getUsers();
+  if (route.params.id) {
+    selectedUser.value = Number(route.params.id);
+  }
 });
 
 watch(selectedUser, () => {
-  getPosts();
+  getPosts(selectedUser.value);
 });
 </script>
 
@@ -85,11 +98,12 @@ label {
   margin-top: 20px; 
 }
 
-h1{
+h1 {
   text-align: center;
+  color: white;
 }
 
-h1, h2 {
+h2, h3 {
   color: white;
 }
 
@@ -108,10 +122,6 @@ li {
               0 8px 0 -3px #f6f6f6,
               0 9px 1px -3px rgba(0, 0, 0, 0.2),
               0 16px 0 -6px #f6f6f6,
-              0 17px 2px -6px rgba(0, 0, 0, 1);
-}
-
-h3 {
-  margin: 0 0 0.5em;
+              0 17px 2px -6px rgba(0, 0, 0, 0.2);
 }
 </style>
